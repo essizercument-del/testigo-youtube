@@ -92,5 +92,27 @@ def main(argv=None) -> int:
     return 0
 
 
+def _gh_hata(mesaj: str):
+    """Hata mesajını GitHub Actions özetine ve annotation'a yazar."""
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return
+    kacis = mesaj.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+    print(f"::error title=Video hatası::{kacis[:3000]}", flush=True)
+    _github_ozet(["### ❌ Hata", "```", mesaj[-6000:], "```"])
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except SystemExit as e:
+        if isinstance(e.code, str):
+            _gh_hata(e.code)
+            print(e.code, file=sys.stderr)
+            sys.exit(1)
+        raise
+    except Exception:  # noqa: BLE001
+        import traceback
+        iz = traceback.format_exc()
+        print(iz, file=sys.stderr)
+        _gh_hata(iz)
+        sys.exit(1)
