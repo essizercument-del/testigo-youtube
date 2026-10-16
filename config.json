@@ -1,0 +1,25 @@
+{
+  "tarife": {
+    "kademe_siniri_kwh": 240,
+    "dusuk_kademe_tl": 3.25,
+    "yuksek_kademe_tl": 4.90
+  },
+  "kanal": {
+    "site": "testigotr.com.tr",
+    "site_url": "https://testigotr.com.tr/",
+    "marka": "TESTIGO",
+    "slogan": "Gerçek ölçüm, gerçek veri"
+  },
+  "yukleme": {
+    "gizlilik": "private",
+    "kategori_id": "28",
+    "dil": "tr",
+    "cocuklara_ozel": false
+  },
+  "video": {
+    "genislik": 1080,
+    "yukseklik": 1920,
+    "fps": 30,
+    "muzik_ses_db": -16
+  }
+}

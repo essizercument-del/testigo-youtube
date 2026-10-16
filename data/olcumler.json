@@ -1,0 +1,56 @@
+[
+  {
+    "id": "philips-50pus8909-tv",
+    "cihaz": "Philips 50PUS8909 TV",
+    "kisa_ad": "Televizyon",
+    "tip": "donem",
+    "kwh": 24.841,
+    "gun": 30,
+    "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
+    "etiketler": ["televizyon elektrik tüketimi", "tv ne kadar elektrik yakar", "philips tv"]
+  },
+  {
+    "id": "buzdolabi",
+    "cihaz": "Buzdolabı",
+    "kisa_ad": "Buzdolabı",
+    "tip": "donem",
+    "kwh": 43.189,
+    "gun": 30,
+    "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
+    "etiketler": ["buzdolabı elektrik tüketimi", "buzdolabı ne kadar elektrik yakar"]
+  },
+  {
+    "id": "sigma-comfort-klima",
+    "cihaz": "Sigma Comfort Klima",
+    "kisa_ad": "Klima",
+    "tip": "donem",
+    "kwh": 208.14,
+    "gun": 31,
+    "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
+    "etiketler": ["klima elektrik tüketimi", "klima ne kadar elektrik yakar", "klima aylık ne kadar yakar"]
+  },
+  {
+    "id": "grundig-gpdh-9634-kurutma",
+    "cihaz": "Grundig GPDH 9634 Kurutma Makinesi",
+    "kisa_ad": "Kurutma makinesi",
+    "tip": "kullanim",
+    "kwh": 1.02,
+    "kullanim_adi": "program",
+    "haftalik_kullanim": 3,
+    "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
+    "etiketler": ["kurutma makinesi elektrik tüketimi", "kurutma makinesi ne kadar elektrik yakar", "grundig kurutma makinesi"]
+  },
+  {
+    "id": "arnica-kayzer-1011-kettle",
+    "cihaz": "Arnica Kayzer 1011 Su Isıtıcı",
+    "kisa_ad": "Su ısıtıcı",
+    "tip": "kullanim",
+    "kwh": 0.121,
+    "kullanim_adi": "kaynatma",
+    "sure_sn": 205,
+    "anlik_watt": 2069,
+    "not": "1 litreden biraz fazla su",
+    "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
+    "etiketler": ["kettle elektrik tüketimi", "su ısıtıcı ne kadar elektrik yakar", "arnica kayzer"]
+  }
+]

@@ -1,0 +1,87 @@
+name: Günlük video
+
+on:
+  schedule:
+    # Her gün 06:47 UTC = 09:47 Türkiye saati
+    - cron: "47 6 * * *"
+  workflow_dispatch:
+    inputs:
+      yukle:
+        description: "YouTube'a yüklensin mi? (kapalıysa sadece video üretilir, Artifacts'tan indirilir)"
+        type: boolean
+        default: true
+      gizlilik:
+        description: "Gizlilik (ayar = config.json'daki değer)"
+        type: choice
+        options: [ayar, private, unlisted, public]
+        default: ayar
+      plan:
+        description: "Belirli bir video (ör. tek:buzdolabi). Boş = sıradaki"
+        type: string
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gunluk-video
+  cancel-in-progress: false
+
+jobs:
+  video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: ffmpeg kur
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+
+      - name: Python paketleri
+        run: pip install -r requirements.txt
+
+      - name: Video üret (ve yükle)
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YUKLE: ${{ github.event_name == 'schedule' || inputs.yukle }}
+          GIZLILIK: ${{ inputs.gizlilik }}
+          PLAN: ${{ inputs.plan }}
+        run: |
+          args=()
+          [ "$YUKLE" = "true" ] && args+=(--yukle)
+          [ -n "$PLAN" ] && args+=(--plan "$PLAN")
+          [ -n "$GIZLILIK" ] && [ "$GIZLILIK" != "ayar" ] && args+=(--gizlilik "$GIZLILIK")
+          python -m testigo_yt "${args[@]}"
+
+      - name: Videoyu sakla (Artifacts)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-${{ github.run_number }}
+          path: out/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Durumu kaydet
+        if: success()
+        run: |
+          git config user.name "testigo-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/durum.json
+          if git diff --cached --quiet; then
+            echo "Durum değişmedi."
+            exit 0
+          fi
+          git commit -m "Video yayınlandı: $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            git pull --rebase -q && git push -q && exit 0
+            sleep 5
+          done
+          exit 1
