@@ -21,20 +21,50 @@ def _kimlik() -> Credentials:
         raise SystemExit(f"Eksik ortam değişkeni / GitHub Secret: {', '.join(eksik)}")
     cr = Credentials(
         token=None,
-        refresh_token=os.environ["YT_REFRESH_TOKEN"].strip(),
-        client_id=os.environ["YT_CLIENT_ID"].strip(),
-        client_secret=os.environ["YT_CLIENT_SECRET"].strip(),
+        refresh_token=_deger("YT_REFRESH_TOKEN"),
+        client_id=_deger("YT_CLIENT_ID"),
+        client_secret=_deger("YT_CLIENT_SECRET"),
         token_uri="https://oauth2.googleapis.com/token",
         scopes=SCOPES,
     )
+    ipucu = _ipucu()
     try:
         cr.refresh(Request())
     except Exception as e:  # noqa: BLE001
-        raise SystemExit(
-            "Google oturumu yenilenemedi. Refresh token süresi dolmuş olabilir "
-            "(uygulama 'Test' modundaysa 7 günde bir dolar). get_token.py'yi tekrar çalıştırıp "
-            f"YT_REFRESH_TOKEN secret'ını güncelle.\nAyrıntı: {e}") from e
+        metin = str(e)
+        if "invalid_client" in metin:
+            neden = ("YT_CLIENT_ID veya YT_CLIENT_SECRET hatalı. İkisinin aynı JSON dosyasından "
+                     "alındığından ve yer değiştirmediğinden emin ol.")
+        elif "invalid_grant" in metin:
+            neden = ("Refresh token geçersiz ya da süresi dolmuş (Test modunda 7 günde bir dolar). "
+                     "get_token.py'yi tekrar çalıştırıp YT_REFRESH_TOKEN'ı güncelle.")
+        else:
+            neden = "Google oturumu yenilenemedi."
+        raise SystemExit(f"{neden}\n{ipucu}\nAyrıntı: {e}") from e
     return cr
+
+
+def _deger(ad: str) -> str:
+    """Secret değerini temizler: boşluklar, tırnaklar ve yanlışlıkla kopyalanan 'AD =' öneki."""
+    v = os.environ[ad].strip().strip('"').strip("'").strip()
+    if "=" in v and v.split("=", 1)[0].strip().upper().startswith("YT_"):
+        v = v.split("=", 1)[1].strip()
+    return v
+
+
+def _ipucu() -> str:
+    """Değerleri ifşa etmeden biçim kontrolü."""
+    kontroller = [
+        ("YT_CLIENT_ID", _deger("YT_CLIENT_ID").endswith(".apps.googleusercontent.com"),
+         "'.apps.googleusercontent.com' ile bitmeli"),
+        ("YT_CLIENT_SECRET", _deger("YT_CLIENT_SECRET").startswith("GOCSPX-"), "'GOCSPX-' ile başlamalı"),
+        ("YT_REFRESH_TOKEN", _deger("YT_REFRESH_TOKEN").startswith("1//"), "'1//' ile başlamalı"),
+    ]
+    satirlar = []
+    for ad, ok, kural in kontroller:
+        uzunluk = len(_deger(ad))
+        satirlar.append(f"{'✓' if ok else '✗'} {ad}: {kural} (uzunluk {uzunluk})")
+    return "Biçim kontrolü:\n" + "\n".join(satirlar)
 
 
 def yukle(video: Path, meta: dict, ayar: dict, gizlilik: str | None = None) -> str:
