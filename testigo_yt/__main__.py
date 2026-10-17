@@ -54,6 +54,12 @@ def main(argv=None) -> int:
             print(f"{isaret:28} {p.anahtar}")
         return 0
 
+    bugun = dt.datetime.now(dt.timezone(dt.timedelta(hours=3))).strftime("%Y-%m-%d")
+    if a.yukle and not a.plan and os.environ.get("GITHUB_EVENT_NAME") == "schedule" and any(
+            k["tarih"].startswith(bugun) for k in durum["yayinlanan"]):
+        print("Bugün zaten bir video yüklendi, zamanlanmış çalışma atlanıyor.")
+        return 0
+
     plan = veri.plan_bul(cihazlar, a.plan) if a.plan else veri.siradaki_plan(cihazlar, durum)
     if plan is None:
         msg = "Yeni video kalmadı: data/olcumler.json'a yeni ölçüm ekle."
