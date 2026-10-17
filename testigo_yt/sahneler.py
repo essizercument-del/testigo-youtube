@@ -46,37 +46,43 @@ def sayac(t, bas, sure, hedef):
 
 
 # ---- sahne fabrikaları -----------------------------------------------------
-def kanca(ust: str, buyuk: str, alt: str | None = None, zemin=None, sure=3.2) -> Sahne:
+def kanca(ust: str, buyuk: str, alt: str | None = None, zemin=None, sure=2.4) -> Sahne:
+    """Açılış. İlk kareden itibaren TAM görünür (fade-in yok): akışta kaydıran kişi
+    0. saniyede ne göreceğine karar veriyor. Büyük satır cevabı/sayıyı taşır (amber)."""
     def ciz(img, d, t):
-        a1, k1 = _gir(t, 0.05)
-        a2, k2 = _gir(t, 0.25, 0.55)
-        a3, k3 = _gir(t, 0.9)
-        f_ust, s_ust = c.sigdir(ust, "yari", 54, ICERIK_G, 2, 40)
-        f_b, s_b = c.sigdir(buyuk, "siyah", 128, ICERIK_G, 4, 72)
-        blok = len(s_b) * int(f_b.size * 1.08)
-        y = 900 - blok // 2
-        c.hap(d, W // 2, y - 150, "GERÇEK ÖLÇÜM", c.font("kalin", 34), c.VURGU, c.ZEMIN, a1)
-        y = c.yazi_blok(d, s_ust, f_ust, y - 40, c.SOLUK, a1, kayma=k1) + 20
-        y = c.yazi_blok(d, s_b, f_b, y, c.YAZI, a2, aralik=1.08, kayma=k2)
+        # 0-0,25 sn: büyük satır %8 büyükten normale "oturur" — hareket var, boşluk yok
+        p = c.yumusak(c.ilerleme(t, 0.0, 0.25))
+        f_ust, s_ust = c.sigdir(ust, "kalin", 64, ICERIK_G, 2, 44)
+        boy = int(170 * (1.08 - 0.08 * p))
+        f_b, s_b = c.sigdir(buyuk, "siyah", boy, ICERIK_G, 3, 84)
+        blok = len(s_b) * int(f_b.size * 1.04)
+        y = 880 - blok // 2
+        c.hap(d, W // 2, y - 210, "GERÇEK ÖLÇÜM", c.font("kalin", 38), c.VURGU, c.ZEMIN, 1.0)
+        y = c.yazi_blok(d, s_ust, f_ust, y - 100, c.YAZI, 1.0) + 10
+        y = c.yazi_blok(d, s_b, f_b, y, c.VURGU, 1.0, aralik=1.04)
+        # altı çizgi: soldan sağa dolar (göz hareketi)
+        g = int(ICERIK_G * c.yumusak(c.ilerleme(t, 0.1, 0.6)))
+        d.rounded_rectangle((c.KENAR, y + 14, c.KENAR + max(12, g), y + 26), radius=6,
+                            fill=c.renk_a(c.VURGU, 0.9))
         if alt:
-            f_a, s_a = c.sigdir(alt, "yari", 52, ICERIK_G, 2, 40)
-            c.yazi_blok(d, s_a, f_a, y + 40, c.VURGU, a3, kayma=k3)
+            f_a, s_a = c.sigdir(alt, "yari", 54, ICERIK_G, 2, 40)
+            c.yazi_blok(d, s_a, f_a, y + 60, c.YAZI, 1.0)
     return Sahne(sure, ciz, zemin, "kanca")
 
 
 def olcum(baslik: str, deger: float, birim: str, basamak: int, kartlar: list[tuple[str, str]],
-          not_: str | None = None, zemin=None, sure=6.0) -> Sahne:
+          not_: str | None = None, zemin=None, sure=4.2) -> Sahne:
     def ciz(img, d, t):
         a1, k1 = _gir(t, 0.05)
         f_b, s_b = c.sigdir(baslik, "kalin", 64, ICERIK_G, 3, 44)
         y = c.yazi_blok(d, s_b, f_b, 560, c.YAZI, a1, kayma=k1)
         # büyük sayaç
-        v = sayac(t, 0.35, 2.2, deger)
+        v = sayac(t, 0.15, 1.3, deger)
         metin = tr_sayi(v, basamak)
         f_s = c.font("siyah", 220)
         while c.genislik(f_s, metin) > ICERIK_G and f_s.size > 120:
             f_s = c.font("siyah", f_s.size - 10)
-        a2 = c.yumusak(c.ilerleme(t, 0.3, 0.35))
+        a2 = c.yumusak(c.ilerleme(t, 0.1, 0.25))
         hedef_metin = tr_sayi(deger, basamak)          # genişliği sabit tut: titreme olmasın
         sx = (W - c.genislik(f_s, hedef_metin)) // 2
         d.text((sx, y + 70), metin, font=f_s, fill=c.renk_a(c.VURGU, a2))
@@ -87,21 +93,21 @@ def olcum(baslik: str, deger: float, birim: str, basamak: int, kartlar: list[tup
         y = alt + 28 + 72 + 90
         # bilgi kartları
         for i, (etiket, deg) in enumerate(kartlar):
-            a, k = _gir(t, 1.6 + 0.35 * i)
+            a, k = _gir(t, 0.9 + 0.25 * i, 0.35)
             y0 = y + i * 170 + k
             kart(d, c.KENAR, y0, W - c.KENAR, y0 + 140, a)
             d.text((c.KENAR + 40, y0 + 46), etiket, font=c.font("yari", 44), fill=c.renk_a(c.SOLUK, a))
             fd = c.font("kalin", 56)
             d.text((W - c.KENAR - 40 - c.genislik(fd, deg), y0 + 40), deg, font=fd, fill=c.renk_a(c.YAZI, a))
         if not_:
-            a, _ = _gir(t, 2.4)
+            a, _ = _gir(t, 1.5)
             f_n, s_n = c.sigdir(not_, "orta", 38, ICERIK_G, 2, 30)
             c.yazi_blok(d, s_n, f_n, y + len(kartlar) * 170 + 20, c.SOLUK, a)
     return Sahne(sure, ciz, zemin, "olcum")
 
 
 def cubuk_grafik(baslik: str, alt_baslik: str, satirlar: list[tuple[str, float, str, bool]],
-                 dipnot: str | None = None, sure=8.0, kademeli=0.25) -> Sahne:
+                 dipnot: str | None = None, sure=5.0, kademeli=0.15) -> Sahne:
     """satirlar: (etiket, değer, değer_metni, vurgulu). Yatay çubuklar sırayla büyür."""
     en_buyuk = max(v for _, v, _, _ in satirlar) or 1
 
@@ -118,9 +124,9 @@ def cubuk_grafik(baslik: str, alt_baslik: str, satirlar: list[tuple[str, float, 
         f_v = c.font("kalin", int(min(48, adim * 0.28)))
         max_cubuk = ICERIK_G
         for i, (etiket, v, vm, vurgu) in enumerate(satirlar):
-            bas = 0.5 + i * kademeli
+            bas = 0.2 + i * kademeli
             a, k = _gir(t, bas, 0.4)
-            p = c.yumusak(c.ilerleme(t, bas + 0.1, 1.1))
+            p = c.yumusak(c.ilerleme(t, bas + 0.05, 0.8))
             y0 = alan_ust + i * adim
             renk_e = c.YAZI if vurgu else c.SOLUK
             d.text((c.KENAR, y0 + k), etiket, font=f_e, fill=c.renk_a(renk_e, a))
@@ -135,21 +141,21 @@ def cubuk_grafik(baslik: str, alt_baslik: str, satirlar: list[tuple[str, float, 
             d.rounded_rectangle((c.KENAR, cy, c.KENAR + g, cy + cubuk_h), radius=min(12, cubuk_h // 2),
                                 fill=c.renk_a(c.VURGU if vurgu else c.CUBUK, a))
         if dipnot:
-            a, _ = _gir(t, 0.5 + n * kademeli + 0.6)
+            a, _ = _gir(t, 0.2 + n * kademeli + 0.4)
             f_n, s_n = c.sigdir(dipnot, "orta", 36, ICERIK_G, 2, 28)
             c.yazi_blok(d, s_n, f_n, c.GUVENLI_ALT - 70, c.SOLUK, a, hiza="sol")
     return Sahne(sure, ciz, None, "grafik")
 
 
 def sonuc(baslik: str, kartlar: list[tuple[str, str, str | None, tuple]], not_: str | None = None,
-          sure=6.5) -> Sahne:
+          sure=4.8, site: str | None = None) -> Sahne:
     """kartlar: (etiket, büyük değer, alt satır, değer rengi)."""
     def ciz(img, d, t):
         a1, k1 = _gir(t, 0.05)
         f_b, s_b = c.sigdir(baslik, "kalin", 76, ICERIK_G, 3, 50)
         y = c.yazi_blok(d, s_b, f_b, 520, c.YAZI, a1, kayma=k1) + 60
         for i, (etiket, deger, alt, renk) in enumerate(kartlar):
-            a, k = _gir(t, 0.5 + 0.5 * i, 0.5)
+            a, k = _gir(t, 0.2 + 0.3 * i, 0.4)
             f_e, s_e = c.sigdir(etiket, "yari", 46, ICERIK_G - 80, 1, 32)
             f_d = c.font("siyah", 120)
             while c.genislik(f_d, deger) > ICERIK_G - 88 and f_d.size > 60:
@@ -165,9 +171,12 @@ def sonuc(baslik: str, kartlar: list[tuple[str, str, str | None, tuple]], not_: 
                 d.text((c.KENAR + 44, y0 + deger_alt + 30), alt, font=f_alt, fill=c.renk_a(c.SOLUK, a))
             y += yuk + 40
         if not_:
-            a, _ = _gir(t, 0.6 + 0.5 * len(kartlar))
+            a, _ = _gir(t, 0.4 + 0.3 * len(kartlar))
             f_n, s_n = c.sigdir(not_, "orta", 36, ICERIK_G, 2, 28)
-            c.yazi_blok(d, s_n, f_n, y + 10, c.SOLUK, a)
+            y = c.yazi_blok(d, s_n, f_n, y + 10, c.SOLUK, a)
+        if site:
+            a, _ = _gir(t, 0.6 + 0.3 * len(kartlar))
+            c.hap(d, W // 2, y + 40, site, c.font("kalin", 46), c.VURGU, c.ZEMIN, a, 36, 18)
     return Sahne(sure, ciz, None, "sonuc")
 
 
@@ -196,6 +205,10 @@ def _tarife_notu(ayar):
     t = ayar["tarife"]
     return (f"Birim fiyat: {tr_sayi(t['dusuk_kademe_tl'])} TL/kWh\n"
             f"Aylık {t['kademe_siniri_kwh']} kWh üstü: {tr_sayi(t['yuksek_kademe_tl'])} TL/kWh")
+
+
+def _tam_tl(x: float) -> str:
+    return f"{tr_sayi(x, 0)} TL"
 
 
 def kwh_metni(x: Cihaz) -> str:
@@ -243,8 +256,10 @@ def sahneleri_kur(plan: Plan, tum: list[Cihaz], ayar: dict, fps: int) -> list[Sa
         h = x.ham
         sahneler = []
         if x.tip == "donem":
-            soru = h.get("soru") or "Ayda kaç TL elektrik yakıyor?"
-            sahneler.append(kanca(x.ad, soru, zemin=foto(x, 0)))
+            dus0, yuk0 = x.tl(x.aylik_kwh)
+            sahneler.append(kanca(f"{x.kisa} ayda", f"{_tam_tl(dus0)}\nYAKIYOR",
+                                  h.get("kanca_alt") or "Bizimkini 30 gün prizden ölçtük",
+                                  zemin=foto(x, 0)))
             kartlar = []
             if h.get("anlik_watt"):
                 kartlar.append(("Anlık güç", f"{tr_sayi(h['anlik_watt'], 0)} W"))
@@ -253,8 +268,13 @@ def sahneleri_kur(plan: Plan, tum: list[Cihaz], ayar: dict, fps: int) -> list[Sa
                                   kartlar, h.get("not"), zemin=klip_ya_da_foto(x)))
         else:
             ka = h.get("kullanim_adi", "kullanım")
-            soru = h.get("soru") or f"Bir {ka} kaç TL'ye mal oluyor?"
-            sahneler.append(kanca(x.ad, soru, zemin=foto(x, 0)))
+            d0, _ = x.tl(h["kwh"])
+            ust = f"{x.kisa}: tek {ka}"
+            buyuk = f"{tr_sayi(d0, 2)} TL"
+            if x.aylik_kwh:
+                ust, buyuk = f"{x.kisa} ayda", f"{_tam_tl(x.tl(x.aylik_kwh)[0])}\nYAKIYOR"
+            sahneler.append(kanca(ust, buyuk, h.get("kanca_alt") or "Prizden ölçtük, gerçek sonuç",
+                                  zemin=foto(x, 0)))
             kartlar = []
             if h.get("sure_sn"):
                 kartlar.append((f"{ka.capitalize()} süresi", sure_metni(h["sure_sn"])))
@@ -275,7 +295,7 @@ def sahneleri_kur(plan: Plan, tum: list[Cihaz], ayar: dict, fps: int) -> list[Sa
             sahneler.append(sonuc(baslik, [
                 (f"Ev {sinir} kWh altındaysa", tr_tl(dus), None, c.DUSUK),
                 (f"Ev {sinir} kWh üstündeyse", tr_tl(yuk), None, c.YUKSEK),
-            ], _tarife_notu(ayar)))
+            ], _tarife_notu(ayar), site=ayar["kanal"]["site"]))
         else:
             ka = h.get("kullanim_adi", "kullanım")
             d1, y1 = x.tl(h["kwh"])
@@ -284,8 +304,9 @@ def sahneleri_kur(plan: Plan, tum: list[Cihaz], ayar: dict, fps: int) -> list[Sa
                 d2, y2 = x.tl(x.aylik_kwh)
                 kartlar.append((f"Aylık (haftada {h['haftalik_kullanim']} {ka})", tr_tl(d2),
                                 f"Yüksek kademede {tr_tl(y2)}", c.VURGU))
-            sahneler.append(sonuc("Faturaya etkisi", kartlar, _tarife_notu(ayar)))
-        sahneler.append(kapanis(ayar))
+            sahneler.append(sonuc("Faturaya etkisi", kartlar, _tarife_notu(ayar),
+                                  site=ayar["kanal"]["site"]))
+        # kapanış/logo ekranı yok: video sonuçta biter, Shorts başa sarınca döngü kesintisiz olur
         return sahneler
 
     if plan.tur == "karsilastirma":
@@ -296,14 +317,14 @@ def sahneleri_kur(plan: Plan, tum: list[Cihaz], ayar: dict, fps: int) -> list[Sa
         oran = cok.aylik_kwh / az.aylik_kwh
         fark = cok.tl(cok.aylik_kwh)[0] - az.tl(az.aylik_kwh)[0]
         return [
-            kanca("Hangisi ayda daha çok yakar?", f"{a.kisa} mı,\n{b.kisa} mı?", zemin=foto(a, 0)),
+            kanca(f"{cok.kisa} vs {az.kisa}", f"{tr_sayi(oran, 1)} KAT\nFARK VAR",
+                  "Prizden ölçtük, fark şaşırtıcı", zemin=foto(cok, 0)),
             cubuk_grafik("Aylık tüketim", "kWh · düşük kademe TL", satirlar,
-                         "* kullanım sıklığına göre tahmini" if tahmin else None, sure=6.5, kademeli=0.5),
+                         "* kullanım sıklığına göre tahmini" if tahmin else None, sure=4.5, kademeli=0.4),
             sonuc(f"Daha çok yakan: {cok.kisa}", [
                 ("Aylık fark", f"+{tr_tl(fark)}", "düşük kademe tarifeyle", c.VURGU),
                 ("Tüketim oranı", f"{tr_sayi(oran, 1)} kat", f"{cok.kisa} / {az.kisa}", c.YAZI),
-            ], _tarife_notu(ayar)),
-            kapanis(ayar),
+            ], _tarife_notu(ayar), site=ayar["kanal"]["site"]),
         ]
 
     if plan.tur == "siralama":
@@ -312,12 +333,12 @@ def sahneleri_kur(plan: Plan, tum: list[Cihaz], ayar: dict, fps: int) -> list[Sa
         en = max(plan.cihazlar, key=lambda x: x.aylik_kwh)
         dus, yuk = en.tl(en.aylik_kwh)
         return [
-            kanca(f"{len(plan.cihazlar)} cihaz, gerçek ölçüm", "Evdeki cihazlar ayda kaç TL yakıyor?"),
+            kanca(f"Evde en çok yakan: {en.kisa}", f"AYDA\n{_tam_tl(dus)}",
+                  f"{len(plan.cihazlar)} cihazı prizden ölçtük"),
             cubuk_grafik("Aylık elektrik maliyeti", "TL · düşük kademe tarife", satirlar,
-                         "* kullanım sıklığına göre tahmini" if tahmin else None, sure=9.0, kademeli=0.45),
+                         "* kullanım sıklığına göre tahmini" if tahmin else None, sure=6.0, kademeli=0.3),
             sonuc("En çok yakan", [(en.kisa, tr_tl(dus), f"Yüksek kademede {tr_tl(yuk)}", c.VURGU)],
-                  _tarife_notu(ayar), sure=5.0),
-            kapanis(ayar),
+                  _tarife_notu(ayar), sure=4.5, site=ayar["kanal"]["site"]),
         ]
 
     raise ValueError(plan.tur)

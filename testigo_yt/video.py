@@ -52,8 +52,7 @@ def videoyu_uret(sahneler: list[Sahne], ayar: dict, cikis: Path, tohum: str,
                 kalan = s.sure - tl
                 if kalan < GECIS and not son:
                     kare = Image.blend(duz, kare, kalan / GECIS)
-                if son and kalan < 0.5:
-                    kare = Image.blend(Image.new("RGB", (W, H), c.ZEMIN), kare, kalan / 0.5)
+                # son karede siyaha kararma yok: Shorts döngüsü kesintisiz olsun
                 if onizleme_dir is not None and abs(tl - s.sure * 0.85) < 0.5 / fps:
                     onizleme_dir.mkdir(parents=True, exist_ok=True)
                     kare.save(onizleme_dir / f"{j + 1:02d}_{s.ad}.jpg", quality=88)
@@ -69,7 +68,7 @@ def videoyu_uret(sahneler: list[Sahne], ayar: dict, cikis: Path, tohum: str,
 
         muzik = muzik_sec(tohum) or ambiyans_uret(toplam + 0.5, Path(tmp) / "muzik.wav", tohum)
         db = ayar["video"]["muzik_ses_db"]
-        af = (f"volume={db}dB,afade=t=in:d=0.8,afade=t=out:st={max(0, toplam - 1.5):.2f}:d=1.5,"
+        af = (f"volume={db}dB,afade=t=in:d=0.05,afade=t=out:st={max(0, toplam - 1.5):.2f}:d=1.5,"
               f"atrim=0:{toplam:.2f}")
         subprocess.run(
             ["ffmpeg", "-y", "-loglevel", "error", "-i", str(sessiz), "-stream_loop", "-1",

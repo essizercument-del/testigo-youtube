@@ -44,7 +44,7 @@ def ambiyans_uret(sure: float, hedef: Path, tohum: str) -> Path:
         if s0 >= n:
             break
         tt = t[s0:s1] - bas
-        zarf = np.clip(tt / 0.9, 0, 1) * np.clip((olcu + 0.8 - tt) / 0.8, 0, 1)
+        zarf = np.clip(tt / (0.05 if i == 0 else 0.9), 0, 1) * np.clip((olcu + 0.8 - tt) / 0.8, 0, 1)
         for m in akor + [akor[0] - 12]:
             f = _nota(m)
             dalga = np.sin(2 * np.pi * f * tt) + 0.25 * np.sin(2 * np.pi * 2 * f * tt + 0.3)
@@ -65,7 +65,7 @@ def ambiyans_uret(sure: float, hedef: Path, tohum: str) -> Path:
     eko[gecikme:] = ses[:-gecikme] * 0.3
     ses = ses + eko
     # giriş/çıkış
-    gir, cik = int(1.0 * SR), int(1.5 * SR)
+    gir, cik = int(0.05 * SR), int(1.5 * SR)  # müzik ilk karede başlar
     ses[:gir] *= np.linspace(0, 1, gir)
     ses[-cik:] *= np.linspace(1, 0, cik)
     ses = ses / (np.max(np.abs(ses)) + 1e-9) * 0.8

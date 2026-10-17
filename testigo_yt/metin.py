@@ -32,7 +32,7 @@ def meta_olustur(plan: Plan, ayar: dict) -> dict:
         h = x.ham
         if x.tip == "donem":
             dus, yuk = x.tl(x.aylik_kwh)
-            baslik = f"{x.ad} Ayda Kaç TL Elektrik Yakar? Gerçek Ölçüm"
+            baslik = f"{x.ad} Ayda {tr_sayi(dus, 0)} TL Elektrik Yakıyor! {h['gun']} Gün Prizden Ölçtüm"
             govde = [f"{x.ad} cihazını {h['gun']} gün boyunca prizden ölçtük.",
                      "",
                      f"Ölçülen tüketim: {tr_sayi(h['kwh'], 2)} kWh ({h['gun']} gün)",
