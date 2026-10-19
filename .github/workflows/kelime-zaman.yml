@@ -1,0 +1,23 @@
+name: Kelime zamanları (deneme)
+on:
+  push:
+    branches: [tts-deneme]
+    paths: ["tts_deneme/eleven/*.mp3", "tts_deneme/eleven/zaman.py"]
+permissions:
+  contents: write
+jobs:
+  zaman:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install faster-whisper
+      - run: python tts_deneme/eleven/zaman.py 2>&1 | tee tts_deneme/eleven/log.txt
+      - if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tts_deneme/eleven && git commit -m "Kelime zamanları [skip ci]" && git pull --rebase && git push || true
