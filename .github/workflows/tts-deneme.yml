@@ -3,6 +3,8 @@ on:
   push:
     branches: [tts-deneme]
     paths: ["tts_deneme/**", ".github/workflows/tts-deneme.yml"]
+permissions:
+  contents: write
 jobs:
   tts:
     runs-on: ubuntu-24.04
@@ -19,3 +21,10 @@ jobs:
         with:
           name: seslendirme
           path: cikti/
+      - name: Çıktıyı dala kaydet
+        if: always()
+        run: |
+          mkdir -p tts_deneme/cikti && cp cikti/* tts_deneme/cikti/ || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tts_deneme/cikti && git commit -m "TTS çıktısı [skip ci]" && git push || true
