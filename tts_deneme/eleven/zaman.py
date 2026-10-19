@@ -1,7 +1,8 @@
 import json, subprocess, numpy as np
 from faster_whisper import WhisperModel
 m = WhisperModel("small", device="cpu", compute_type="int8")
-raw = subprocess.run(["ffmpeg","-v","error","-i","tts_deneme/eleven/bolum1.mp3","-f","s16le","-ac","1","-ar","16000","-"],capture_output=True).stdout
+import wave
+raw = wave.open("tts_deneme/eleven/bolum1_16k.wav").readframes(10**9)
 audio = np.frombuffer(raw, np.int16).astype(np.float32)/32768
 segs, info = m.transcribe(audio, language="tr", word_timestamps=True, beam_size=5)
 out = []
