@@ -7,10 +7,16 @@ def tam_zincir(host="testigotr.com.tr"):
     leaf = ssl.DER_cert_to_PEM_cert(der)
     txt = subprocess.run(["openssl", "x509", "-noout", "-text"], input=leaf, capture_output=True, text=True).stdout
     print([l.strip() for l in txt.splitlines() if "Issuer:" in l or "CA Issuers" in l])
-    m = re.search(r"CA Issuers - URI:(\S+)", txt)
-    ara = requests.get(m.group(1), timeout=30).content
-    pem = subprocess.run(["openssl", "x509", "-inform", "DER" if not ara.startswith(b"-----") else "PEM"], input=ara, capture_output=True).stdout.decode()
-    open("zincir.pem", "w").write(open(certifi.where()).read() + "\n" + pem)
+    eklenen = ""
+    for _ in range(4):
+        m = re.search(r"CA Issuers - URI:(\S+)", txt)
+        if not m: break
+        ara = requests.get(m.group(1), timeout=30).content
+        pem = subprocess.run(["openssl", "x509", "-inform", "PEM" if ara.startswith(b"-----") else "DER"], input=ara, capture_output=True).stdout.decode()
+        eklenen += pem + "\n"
+        txt = subprocess.run(["openssl", "x509", "-noout", "-text"], input=pem, capture_output=True, text=True).stdout
+        print([l.strip() for l in txt.splitlines() if "Issuer:" in l or "Subject:" in l or "CA Issuers" in l])
+    open("zincir.pem", "w").write(open(certifi.where()).read() + "\n" + eklenen)
     return "zincir.pem"
 S = requests.Session(); S.verify = tam_zincir(); S.headers["User-Agent"] = "Mozilla/5.0 (testigo-youtube; site sahibi)"
 B = "https://testigotr.com.tr/wp-json/wp/v2"
