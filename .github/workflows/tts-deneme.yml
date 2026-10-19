@@ -1,0 +1,20 @@
+name: TTS deneme
+on:
+  push:
+    branches: [tts-deneme]
+    paths: ["tts_deneme/**", ".github/workflows/tts-deneme.yml"]
+jobs:
+  tts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install edge-tts
+      - run: mkdir -p cikti && python tts_deneme/uret.py && ls -la cikti
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seslendirme
+          path: cikti/
