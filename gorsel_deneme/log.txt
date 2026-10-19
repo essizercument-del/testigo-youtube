@@ -1,3 +1,4 @@
+['Issuer: C = US, O = SSL Corp, CN = TrustSafe TLS RSA SubCA 2', 'CA Issuers - URI:http://cert.ssl.com/TrustSafe-TLS-I-R2.cer']
 Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/urllib3/connectionpool.py", line 470, in _make_request
     self._validate_conn(conn)
@@ -22,7 +23,7 @@ Traceback (most recent call last):
     self.do_handshake()
   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/ssl.py", line 1332, in do_handshake
     self._sslobj.do_handshake()
-ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)
+ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get issuer certificate (_ssl.c:1010)
 
 During handling of the above exception, another exception occurred:
 
@@ -32,7 +33,7 @@ Traceback (most recent call last):
                ^^^^^^^^^^^^^^^^^^^
   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/urllib3/connectionpool.py", line 494, in _make_request
     raise new_e
-urllib3.exceptions.SSLError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)
+urllib3.exceptions.SSLError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get issuer certificate (_ssl.c:1010)
 
 The above exception was the direct cause of the following exception:
 
@@ -46,15 +47,15 @@ Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/urllib3/util/retry.py", line 555, in increment
     raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='testigotr.com.tr', port=443): Max retries exceeded with url: /wp-json/wp/v2/posts?per_page=100&page=1&_fields=id%2Cslug%2Ctitle%2Clink%2Cfeatured_media (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)')))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='testigotr.com.tr', port=443): Max retries exceeded with url: /wp-json/wp/v2/posts?per_page=100&page=1&_fields=id%2Cslug%2Ctitle%2Clink%2Cfeatured_media (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get issuer certificate (_ssl.c:1010)')))
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/runner/work/testigo-youtube/testigo-youtube/gorsel_deneme/cek.py", line 14, in <module>
+  File "/home/runner/work/testigo-youtube/testigo-youtube/gorsel_deneme/cek.py", line 27, in <module>
     posts = all_pages("posts", "id,slug,title,link,featured_media")
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/testigo-youtube/testigo-youtube/gorsel_deneme/cek.py", line 7, in all_pages
+  File "/home/runner/work/testigo-youtube/testigo-youtube/gorsel_deneme/cek.py", line 20, in all_pages
     r = S.get(f"{B}/{ep}", params={"per_page": 100, "page": p, "_fields": fields}, timeout=30)
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/requests/sessions.py", line 671, in get
@@ -68,4 +69,4 @@ Traceback (most recent call last):
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/requests/adapters.py", line 727, in send
     raise SSLError(e, request=request)
-requests.exceptions.SSLError: HTTPSConnectionPool(host='testigotr.com.tr', port=443): Max retries exceeded with url: /wp-json/wp/v2/posts?per_page=100&page=1&_fields=id%2Cslug%2Ctitle%2Clink%2Cfeatured_media (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)')))
+requests.exceptions.SSLError: HTTPSConnectionPool(host='testigotr.com.tr', port=443): Max retries exceeded with url: /wp-json/wp/v2/posts?per_page=100&page=1&_fields=id%2Cslug%2Ctitle%2Clink%2Cfeatured_media (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get issuer certificate (_ssl.c:1010)')))
