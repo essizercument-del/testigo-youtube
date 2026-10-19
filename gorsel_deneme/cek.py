@@ -1,5 +1,18 @@
-import json, os, re, requests
-S = requests.Session(); S.headers["User-Agent"] = "Mozilla/5.0 (testigo-youtube; site sahibi)"
+import json, os, re, requests, ssl, socket, subprocess, certifi
+# Sitenin sunucusu ara sertifikayı göndermiyor; AIA adresinden indirip zinciri tamamlıyoruz (doğrulama açık kalır)
+def tam_zincir(host="testigotr.com.tr"):
+    ctx = ssl.create_default_context(); ctx.check_hostname = False; ctx.verify_mode = ssl.CERT_NONE
+    with socket.create_connection((host, 443), timeout=20) as so, ctx.wrap_socket(so, server_hostname=host) as ss:
+        der = ss.getpeercert(binary_form=True)
+    leaf = ssl.DER_cert_to_PEM_cert(der)
+    txt = subprocess.run(["openssl", "x509", "-noout", "-text"], input=leaf, capture_output=True, text=True).stdout
+    print([l.strip() for l in txt.splitlines() if "Issuer:" in l or "CA Issuers" in l])
+    m = re.search(r"CA Issuers - URI:(\S+)", txt)
+    ara = requests.get(m.group(1), timeout=30).content
+    pem = subprocess.run(["openssl", "x509", "-inform", "DER" if not ara.startswith(b"-----") else "PEM"], input=ara, capture_output=True).stdout.decode()
+    open("zincir.pem", "w").write(open(certifi.where()).read() + "\n" + pem)
+    return "zincir.pem"
+S = requests.Session(); S.verify = tam_zincir(); S.headers["User-Agent"] = "Mozilla/5.0 (testigo-youtube; site sahibi)"
 B = "https://testigotr.com.tr/wp-json/wp/v2"
 def all_pages(ep, fields):
     out, p = [], 1
