@@ -1,3 +1,36 @@
-edge-tts 7.3.1
-OK tr-TR-AhmetNeural
-OK tr-TR-EmelNeural
+OK ahmet 1
+OK ahmet 2
+HATA ahmet 3 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 3 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 3 2 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 3 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 3 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 4 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 4 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 4 2 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 4 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 4 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 2 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 6 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 6 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 6 2 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 6 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 6 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 7 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 7 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 7 2 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 7 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 7 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+OK ahmet 8
+OK emel 1
+OK emel 2
+OK emel 3
+OK emel 4
+OK emel 5
+OK emel 6
+OK emel 7
+OK emel 8
