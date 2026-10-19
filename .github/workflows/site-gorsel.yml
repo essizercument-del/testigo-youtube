@@ -1,0 +1,24 @@
+name: Site görselleri (deneme)
+on:
+  push:
+    branches: [tts-deneme]
+    paths: ["gorsel_deneme/cek.py", ".github/workflows/site-gorsel.yml"]
+permissions:
+  contents: write
+jobs:
+  cek:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - run: python gorsel_deneme/cek.py 2>&1 | tee gorsel_deneme/log.txt
+      - name: Kaydet
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gorsel_deneme && git commit -m "Site görselleri [skip ci]" && git pull --rebase && git push || true
