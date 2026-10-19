@@ -13,8 +13,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install edge-tts
-      - run: mkdir -p cikti && python tts_deneme/uret.py && ls -la cikti
+      - run: mkdir -p cikti && python tts_deneme/uret.py 2>&1 | tee cikti/log.txt; ls -la cikti
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: seslendirme
           path: cikti/
