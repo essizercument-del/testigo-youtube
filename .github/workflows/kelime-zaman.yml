@@ -2,7 +2,7 @@ name: Kelime zamanları (deneme)
 on:
   push:
     branches: [tts-deneme]
-    paths: ["tts_deneme/eleven/*.mp3", "tts_deneme/eleven/zaman.py"]
+    paths: ["tts_deneme/eleven/*.wav", "tts_deneme/eleven/zaman.py"]
 permissions:
   contents: write
 jobs:
