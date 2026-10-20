@@ -19,12 +19,11 @@ HATA ahmet 4 2 NoAudioReceived('No audio was received. Please verify that your p
 HATA ahmet 4 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
 HATA ahmet 4 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
 HATA ahmet 5 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
-OK ahmet 5
-HATA ahmet 6 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
-HATA ahmet 6 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
-HATA ahmet 6 2 WSServerHandshakeError(RequestInfo(url=URL('wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4&ConnectionId=71d648af6b8042d6b45d769916039535&Sec-MS-GEC=A3AAE11E063D8D5B-B9810B43EC25AD984D7E16DAA1CB646280004F66D036311EBCA1E6F68FD4F1CE&Sec-MS-GEC-Version=2-143.0.3650.75'), method='GET', headers=<CIMultiDictProxy('Host': 'speech.platform.bing.com', 'Pragma': 'no-cache', 'Cache-Control': 'no-cache', 'Origin': 'chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold', 'Sec-WebSocket-Version': '13', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', 'Accept-Encoding': 'gzip, deflate, br, zstd', 'Accept-Language': 'en-US,en;q=0.9', 'Cookie': 'muid=5C196634115C07C1D51890E8D21BE831;', 'Upgrade': 'websocket', 'Connection': 'Upgrade', 'Sec-WebSocket-Key': 'LXWElOy5eZCtNR/yjQo4HQ==', 'Sec-WebSocket-Extensions': 'permessage-deflate; client_max_window_bits', 'Accept': '*/*')>, real_url=URL('wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4&ConnectionId=71d648af6b8042d6b45d769916039535&Sec-MS-GEC=A3AAE11E063D8D5B-B9810B43EC25AD984D7E16DAA1CB646280004F66D036311EBCA1E6F68FD4F1CE&Sec-MS-GEC-Version=2-143.0.3650.75')), (), status=200, message='Invalid response status', headers=<CIMultiDictProxy('Cache-Control': 'no-store', 'Content-Length': '90', 'Content-Type': 'text/plain', 'X-MSEdge-Ref': 'Ref A: 6C5D10B47147411CAA0115482227B61D Ref B: BL2AA2030101031 Ref C: 2026-10-19T19:02:19Z', 'Date': 'Mon, 19 Oct 2026 19:02:19 GMT', 'Connection': 'close')>)
-HATA ahmet 6 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
-HATA ahmet 6 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 2 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 3 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+HATA ahmet 5 4 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
+OK ahmet 6
 HATA ahmet 7 0 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
 HATA ahmet 7 1 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
 HATA ahmet 7 2 NoAudioReceived('No audio was received. Please verify that your parameters are correct.')
