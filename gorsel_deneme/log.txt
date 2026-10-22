@@ -2,6 +2,4 @@
 ['Issuer: C = US, O = SSL Corporation, CN = E-Tugra TLS RSA CA 2', 'Subject: C = US, O = SSL Corp, CN = TrustSafe TLS RSA SubCA 2', 'CA Issuers - URI:http://cert.ssl.com/ETugra-TLS-T-R2.cer']
 ['Issuer: C = US, O = SSL Corporation, CN = SSL.com TLS RSA Root CA 2022', 'Subject: C = US, O = SSL Corporation, CN = E-Tugra TLS RSA CA 2', 'CA Issuers - URI:http://cert.ssl.com/SSLcom-TLS-Root-2022-RSA.cer']
 ['Issuer: C = US, O = SSL Corporation, CN = SSL.com TLS RSA Root CA 2022', 'Subject: C = US, O = SSL Corporation, CN = SSL.com TLS RSA Root CA 2022']
-posts 1 200
-media 1 200
-34 yazı, 91 görsel
+ok {'camasir-makinesi-elektrik-tuketimi-karma-yikama': 5353, 'camasir-makinesi-bos-calistirmak-kac-watt-harcar': 5978}
