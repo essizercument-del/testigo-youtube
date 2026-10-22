@@ -2,7 +2,7 @@ name: Site görselleri (deneme)
 on:
   push:
     branches: [tts-deneme]
-    paths: ["gorsel_deneme/cek.py", ".github/workflows/site-gorsel.yml"]
+    paths: ["gorsel_deneme/cek.py", "gorsel_deneme/yazi_cek.py", ".github/workflows/site-gorsel.yml"]
 permissions:
   contents: write
 jobs:
@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install requests certifi
-      - run: python gorsel_deneme/cek.py 2>&1 | tee gorsel_deneme/log.txt
+      - run: python gorsel_deneme/yazi_cek.py 2>&1 | tee gorsel_deneme/log.txt
       - name: Kaydet
         if: always()
         run: |
