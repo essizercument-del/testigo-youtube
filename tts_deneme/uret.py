@@ -9,7 +9,7 @@ async def one(text, voice, rate, out):
             if ch["type"] == "audio": f.write(ch["data"])
             elif ch["type"] == "WordBoundary": words.append({"t": ch["offset"]/1e7, "d": ch["duration"]/1e7, "w": ch["text"]})
     json.dump(words, open(out + ".json", "w", encoding="utf-8"), ensure_ascii=False)
-for voice, tag in [("tr-TR-AhmetNeural", "ahmet"), ("tr-TR-EmelNeural", "emel")]:
+for voice, tag in [("tr-TR-EmelNeural", "b5_emel")]:
     for i, t in enumerate(lines, 1):
         for deneme in range(5):
             try:

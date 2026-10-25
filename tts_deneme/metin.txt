@@ -1,8 +1,7 @@
-Tek bir cihaz faturanı ne kadar şişirir? Seriye klimayla başlıyoruz.
-Sigma Comfort inverter klimayı, Novato enerji ölçerle otuz bir gün boyunca ölçtük.
-Uygulamadaki sayaç durmadan arttı: seksen iki, yüz kırk yedi... ve ay sonunda iki yüz sekiz kilovatsaat.
-Bu, ayda yaklaşık altı yüz yetmiş altı lira demek. Her gün cebinden yirmi iki lira çıkıyor.
-Ama dikkat! Aylık iki yüz kırk kilovatsaat sınırına sadece otuz iki kaldı.
-Sınırı aşarsan, aşan her kilovatsaat yüzde elli bir daha pahalı.
-Bir sonraki bölümde televizyonu ekliyoruz. Sınır aşılacak mı? Takipte kal!
-Senin klimanın aylık tüketimi kaç? Yorumlara yaz.
+Bir kurutma iki saat on sekiz dakika sürüyor. Peki kaç lira yakıyor? Tahmin et.
+Serinin beşinci bölümü: kurutma makinesi. Dokuz kiloluk, ısı pompalı Grundig makinemizi Tapo akıllı prizle ölçtük.
+Isı pompası devreye girince yedi yüz yirmi watta çıkıyor. Çamaşır makinesinin yarısından da az.
+Bir programın sonunda: bir virgül sıfır iki kilovatsaat. Pahalı kademede beş lira.
+Haftada üç kez kurutursak ayda on iki program. Toplam on iki virgül üç kilovatsaat, altmış lira.
+Beş cihazın toplamı iki yüz doksan altı kilovatsaat. Ve fatura ilk kez bin lirayı geçti: bin elli beş lira!
+Sırada bulaşık makinesi var. Takipte kal! Sen kurutma makinesi kullanıyor musun? Evet mi, hayır mı? Yorumlara yaz.
