@@ -19,7 +19,7 @@ def tam_zincir(host="testigotr.com.tr"):
     return "zincir.pem"
 
 S = requests.Session(); S.verify = tam_zincir(); S.headers["User-Agent"] = "Mozilla/5.0 (testigo-youtube; site sahibi)"
-slugs = ["camasir-makinesi-elektrik-tuketimi-karma-yikama", "camasir-makinesi-bos-calistirmak-kac-watt-harcar"]
+slugs = ["isi-pompali-kurutma-makinesi-elektrik-tuketimi"]
 out = {}
 for s in slugs:
     r = S.get("https://testigotr.com.tr/wp-json/wp/v2/posts", params={"slug": s, "_fields": "title,content,link"}, timeout=30)
