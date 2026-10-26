@@ -47,24 +47,64 @@ def ayarlar():
     return ayar, uz
 
 
+class UzunCihaz(Cihaz):
+    """Kullanım başına ölçümlerde 'aylik_kullanim' (ayda kaç kez) verilmişse aylık tüketimi
+    ondan hesaplar (Shorts serisindeki gibi); yoksa haftalık kullanımdan."""
+
+    @property
+    def aylik_kwh(self):
+        ak = self.ham.get("aylik_kullanim")
+        if self.tip == "kullanim" and ak:
+            return self.ham["kwh"] * ak
+        return super().aylik_kwh
+
+    def siklik(self) -> str:
+        ka = self.ham.get("kullanim_adi", "kullanım")
+        if self.ham.get("aylik_kullanim"):
+            return f"ayda {self.ham['aylik_kullanim']} {ka}"
+        return f"haftada {self.ham['haftalik_kullanim']} {ka}"
+
+
 def cihazlar_hazirla(ayar, uz) -> list[Cihaz]:
     tum = veri.cihazlari_yukle(ayar)
     secili = []
     for x in tum:
         if x.id in uz.get("haric", []):
             continue
-        hk = uz.get("haftalik_kullanim", {}).get(x.id)
-        if hk and x.tip == "kullanim":
-            x.ham = {**x.ham, "haftalik_kullanim": hk}
+        x = UzunCihaz(dict(x.ham), x.tarife)
+        for alan in ("haftalik_kullanim", "aylik_kullanim"):
+            v = uz.get(alan, {}).get(x.id)
+            if v and x.tip == "kullanim":
+                x.ham[alan] = v
         if x.aylik_kwh:
             secili.append(x)
         else:
-            print(f"! {x.kisa}: aylık tahmin için haftalik_kullanim yok, videoya alınmadı")
+            print(f"! {x.kisa}: aylık tahmin için kullanım sıklığı yok, videoya alınmadı")
     return sorted(secili, key=lambda x: x.aylik_kwh)
+
+
+def fatura(kwh: float, tarife: dict) -> float:
+    """Kademeli konut faturası (sınıra kadar düşük, üstü yüksek fiyat)."""
+    s = tarife["kademe_siniri_kwh"]
+    return min(kwh, s) * tarife["dusuk_kademe_tl"] + max(0.0, kwh - s) * tarife["yuksek_kademe_tl"]
+
+
+def kwh(x: Cihaz) -> float:
+    return x.aylik_kwh
 
 
 def tl(x: Cihaz) -> float:
     return x.tl(x.aylik_kwh)[0]
+
+
+def ek(sayi: int) -> str:
+    """Yüzde ifadesinin iyelik eki: 70'i, 64'ü, 62'si, 90'ı ..."""
+    sayi = int(sayi)
+    if sayi % 100 == 0 and sayi:
+        return "'ü"
+    if sayi % 10:
+        return {1: "'i", 2: "'si", 3: "'ü", 4: "'ü", 5: "'i", 6: "'sı", 7: "'si", 8: "'i", 9: "'u"}[sayi % 10]
+    return {10: "'u", 20: "'si", 30: "'u", 40: "'ı", 50: "'si", 60: "'ı", 70: "'i", 80: "'i", 90: "'ı"}[sayi % 100]
 
 
 def tam(x: float) -> str:
@@ -75,24 +115,26 @@ def tam(x: float) -> str:
 def metinler(cihazlar: list[Cihaz], ayar, uz) -> dict[str, str]:
     n = len(cihazlar)
     t = ayar["tarife"]
-    toplam = sum(tl(x) for x in cihazlar)
+    toplam = sum(kwh(x) for x in cihazlar)
     en = cihazlar[-1]
-    pay = tl(en) / toplam * 100
+    pay = kwh(en) / toplam * 100
+    sinir = t["kademe_siniri_kwh"]
     m = {}
     m["01_kanca"] = (
         f"Evdeki {n} ev aletini prizden tek tek ölçtük. Sonuç gerçekten şaşırtıcı: bu {n} cihazın "
-        f"aylık elektrik faturasının yüzde {tam(pay)}'i tek bir cihazdan geliyor. Hangisi olduğunu "
+        f"aylık elektrik tüketiminin yüzde {tam(pay)}{ek(round(pay))} tek bir cihazdan geliyor. Hangisi olduğunu "
         f"sona saklıyoruz. En az yakandan en çok yakana doğru gidiyoruz.")
     m["02_yontem"] = (
         f"Önce nasıl ölçtüğümüzü anlatalım. Ölçümleri {uz.get('olcum_cihazi', 'enerji ölçer')} ile yaptık. "
         f"Buzdolabı, televizyon gibi uzun süre çalışan cihazları yaklaşık bir ay boyunca ölçerin üzerinde bıraktık. "
-        f"Kurutma makinesi, su ısıtıcı gibi cihazlarda ise tek bir kullanımı ölçüp haftalık kullanıma göre aylığa çevirdik. "
+        f"Kurutma makinesi, su ısıtıcı gibi cihazlarda ise tek bir kullanımı ölçüp kullanım sıklığına göre aylığa çevirdik. "
         f"Hesapta kilovatsaat başına {tr_sayi(t['dusuk_kademe_tl'])} lira kullandık. Ayda "
         f"{t['kademe_siniri_kwh']} kilovatsaati aşan evlerde bu fiyat {tr_sayi(t['yuksek_kademe_tl'])} liraya çıkıyor.")
     kum = 0.0
     for i, x in enumerate(cihazlar):
         h = x.ham
-        kum += tl(x)
+        onceki = kum
+        kum += kwh(x)
         sira = n - i
         if i == n - 1:
             bas = f"Ve birinci sırada: {x.kisa}. "
@@ -107,18 +149,25 @@ def metinler(cihazlar: list[Cihaz], ayar, uz) -> dict[str, str]:
         else:
             ka = h.get("kullanim_adi", "kullanım")
             orta = (f"{x.ad} için tek bir {ka} {tr_sayi(h['kwh'], 2)} kilovatsaat çekiyor; yani yaklaşık "
-                    f"{tr_sayi(x.tl(h['kwh'])[0], 2)} lira. Haftada {h['haftalik_kullanim']} {ka} yaparsanız "
+                    f"{tr_sayi(x.tl(h['kwh'])[0], 2)} lira. {x.siklik().capitalize()} yaparsanız "
                     f"aylık maliyet yaklaşık {tam(tl(x))} lira.")
             if h.get("anlik_watt"):
                 orta += f" Çalışırken anlık olarak {tam(h['anlik_watt'])} vat çekiyor."
         if i == n - 1:
-            digerleri = toplam - tl(x)
-            son = (f" Tek başına diğer {n - 1} cihazın toplamının {tr_sayi(tl(x) / digerleri, 1)} katı. "
-                   f"{n} cihazın toplam faturası ayda yaklaşık {tam(toplam)} lira; bunun yüzde {tam(pay)}'i {x.kisa.lower()}.")
+            digerleri = toplam - kwh(x)
+            son = (f" Tek başına diğer {n - 1} cihazın toplamının {tr_sayi(kwh(x) / digerleri, 1)} katı. "
+                   f"{n} cihazın toplam tüketimi ayda {tam(toplam)} kilovatsaat; bunun yüzde {tam(pay)}{ek(round(pay))} {x.kisa.lower()}.")
+            if onceki <= sinir < kum:
+                son += (f" Ve {sinir} kilovatsaat sınırı aşılıyor: aşan kısım {tr_sayi(t['yuksek_kademe_tl'])} liradan "
+                        f"faturalanıyor. Toplam fatura ayda yaklaşık {tam(fatura(toplam, t))} lira.")
+            else:
+                son += f" Toplam fatura ayda yaklaşık {tam(fatura(toplam, t))} lira."
         elif i == 0:
             son = ""
         else:
-            son = f" Şu ana kadarki toplam: ayda yaklaşık {tam(kum)} lira."
+            son = f" Şu ana kadarki toplam fatura: ayda yaklaşık {tam(fatura(kum, t))} lira."
+            if onceki <= sinir < kum:
+                son += f" {sinir} kilovatsaat sınırı da aşıldı; bundan sonrası pahalı kademeden."
         m[f"{i + 3:02d}_{x.id}"] = bas + orta + son
     k = len(cihazlar) + 3
     sirali = list(reversed(cihazlar))
@@ -194,8 +243,8 @@ class Sahne:
 
 def s_kanca(cihazlar, ayar):
     n = len(cihazlar)
-    toplam = sum(tl(x) for x in cihazlar)
-    pay = tl(cihazlar[-1]) / toplam * 100
+    toplam = sum(kwh(x) for x in cihazlar)
+    pay = kwh(cihazlar[-1]) / toplam * 100
     # gizemli çubuklar: gerçek oranlarla, ama isimsiz
     oranlar = [tl(x) / tl(cihazlar[-1]) for x in cihazlar]
 
@@ -206,7 +255,7 @@ def s_kanca(cihazlar, ayar):
               c.VURGU, c.ZEMIN, 1.0)
         yazi(d, (KENAR, 340), f"{n} ev aletini prizden ölçtük", c.font("kalin", 64), c.YAZI)
         f = c.font("siyah", int(124 * (1.06 - 0.06 * p)))
-        yazi(d, (KENAR, 440), f"Faturanın %{tam(pay)}'i", f, c.VURGU)
+        yazi(d, (KENAR, 440), f"Elektriğin %{tam(pay)}{ek(round(pay))}", f, c.VURGU)
         yazi(d, (KENAR, 580), "TEK bir cihazdan", f, c.VURGU)
         g = int(760 * c.yumusak(c.ilerleme(t, 0.2, 0.8)))
         d.rounded_rectangle((KENAR, 740, KENAR + max(12, g), 752), radius=6, fill=c.renk_a(c.VURGU, 0.9))
@@ -251,28 +300,37 @@ def s_yontem(cihazlar, ayar, uz):
     return ciz
 
 
-def kumulatif_serit(d, cihazlar, i, t, a=1.0):
-    """Alt bant: şimdiye kadarki cihazların aylık TL'si üst üste."""
-    toplam = sum(tl(x) for x in cihazlar)
+def kumulatif_serit(d, cihazlar, i, t, ayar, a=1.0):
+    """Alt bant: şimdiye kadarki cihazların aylık kWh'i üst üste; değer kademeli fatura."""
+    tarife = ayar["tarife"]
+    sinir = tarife["kademe_siniri_kwh"]
+    toplam = max(sum(kwh(x) for x in cihazlar), sinir * 1.05)
     x0, x1, y0, h = KENAR, W - KENAR, 968, 34
-    kum = sum(tl(x) for x in cihazlar[: i + 1])
     p = c.yumusak(c.ilerleme(t, 1.6, 1.2))
-    goster = sum(tl(x) for x in cihazlar[:i]) + tl(cihazlar[i]) * p
-    yazi(d, (x0, y0 - 52), f"Toplam fatura (ölçülen {i + 1}/{len(cihazlar)} cihaz)", c.font("yari", 32), c.SOLUK, a)
-    deger = f"ayda {tam(goster)} TL"
+    kum = sum(kwh(x) for x in cihazlar[:i]) + kwh(cihazlar[i]) * p
+    asti = kum > sinir
+    yazi(d, (x0, y0 - 52), f"Toplam ({i + 1}/{len(cihazlar)} cihaz): {tr_sayi(kum, 0)} kWh", c.font("yari", 32),
+         c.SOLUK, a)
+    son = sum(kwh(x) for x in cihazlar[: i + 1])
     fv = c.font("kalin", 36)
-    yazi(d, (x1 - c.genislik(fv, f"ayda {tam(kum)} TL"), y0 - 54), deger, fv, c.YAZI, a)
+    yazi(d, (x1 - c.genislik(fv, f"fatura ayda {tam(fatura(son, tarife))} TL"), y0 - 54),
+         f"fatura ayda {tam(fatura(kum, tarife))} TL", fv, c.YUKSEK if asti else c.YAZI, a)
     d.rounded_rectangle((x0, y0, x1, y0 + h), radius=h // 2, fill=c.renk_a((255, 255, 255), 0.06 * a))
     bas = x0
     for j, x in enumerate(cihazlar[: i + 1]):
-        g = (x1 - x0) * tl(x) / toplam * (p if j == i else 1)
+        g = (x1 - x0) * kwh(x) / toplam * (p if j == i else 1)
         if g < 1:
             continue
         renk = c.VURGU if j == i else SEGMENT_RENK[j % len(SEGMENT_RENK)]
         d.rectangle((bas, y0, bas + g, y0 + h), fill=c.renk_a(renk, a))
         bas += g
-    # uçları yuvarlat: zemin rengiyle köşe maskesi yerine kenarı yeniden çiz
     d.rounded_rectangle((x0, y0, x1, y0 + h), radius=h // 2, outline=c.renk_a(c.PANEL_KENAR, a), width=2)
+    # kademe sınırı çizgisi
+    sx = x0 + (x1 - x0) * sinir / toplam
+    d.rectangle((sx - 2, y0 - 10, sx + 2, y0 + h + 10), fill=c.renk_a(c.YUKSEK, a))
+    f_s = c.font("yari", 26)
+    et = f"{sinir} kWh sınırı" + (" aşıldı!" if asti else "")
+    yazi(d, (sx - c.genislik(f_s, et) // 2, y0 + h + 14), et, f_s, c.YUKSEK, a)
 
 
 def s_cihaz(cihazlar, i, ayar):
@@ -288,7 +346,7 @@ def s_cihaz(cihazlar, i, ayar):
         olcum = f"{h['gun']} gün prizden ölçüm: {tr_sayi(h['kwh'], 2)} kWh"
     else:
         ka = h.get("kullanim_adi", "kullanım")
-        olcum = (f"Tek {ka}: {tr_sayi(h['kwh'], 3)} kWh · haftada {h['haftalik_kullanim']} {ka}")
+        olcum = f"Tek {ka}: {tr_sayi(h['kwh'], 3)} kWh · {x.siklik()}"
     son = i == n - 1
     sag = 990
 
@@ -329,7 +387,7 @@ def s_cihaz(cihazlar, i, ayar):
         yazi(d, (sag, yb + 66 + k4), f"Yüksek kademede {tam(yuk)} TL", c.font("orta", 38), c.YUKSEK, a4)
         if x.aylik_tahmini:
             yazi(d, (sag, yb + 120 + k4), "* kullanım sıklığına göre tahmini", c.font("orta", 30), c.SOLUK, a4)
-        kumulatif_serit(d, cihazlar, i, t, a0)
+        kumulatif_serit(d, cihazlar, i, t, ayar, a0)
     return ciz
 
 
@@ -371,7 +429,9 @@ def s_siralama(cihazlar, ayar):
             f_p = c.font("orta", 36)
             yazi(d, (W - KENAR - c.genislik(f_p, pay), y + 4), pay, f_p, c.SOLUK, aj * c.kis(p * 1.5))
         an, _ = gir(t, 0.3 + 0.35 * n + 0.4)
-        yazi(d, (KENAR, 950), f"Toplam: ayda {tam(toplam)} TL   ·   * kullanım sıklığına göre tahmini",
+        top_kwh = sum(kwh(x) for x in cihazlar)
+        yazi(d, (KENAR, 950), f"Toplam {tr_sayi(top_kwh, 0)} kWh · kademeli fatura ayda "
+                              f"{tam(fatura(top_kwh, ayar['tarife']))} TL   ·   * kullanım sıklığına göre tahmini",
              c.font("orta", 32), c.SOLUK, an)
     return ciz
 
@@ -546,13 +606,13 @@ def kapak(cihazlar, ayar, cikis: Path):
     img = c.duz_zemin(Wk, Hk)
     d = ImageDraw.Draw(img, "RGBA")
     n = len(cihazlar)
-    toplam = sum(tl(x) for x in cihazlar)
-    pay = tl(cihazlar[-1]) / toplam * 100
+    toplam = sum(kwh(x) for x in cihazlar)
+    pay = kwh(cihazlar[-1]) / toplam * 100
     c.simsek(d, 60, 48, 40, c.VURGU)
     yazi(d, (108, 50), ayar["kanal"]["marka"], c.font("kalin", 36), c.YAZI)
     yazi(d, (60, 130), f"{n} CİHAZI ÖLÇTÜM", c.font("siyah", 84), c.YAZI)
-    yazi(d, (60, 250), "FATURANIN", c.font("siyah", 64), c.YAZI)
-    yazi(d, (60, 320), f"%{tam(pay)}'i", c.font("siyah", 160), c.VURGU)
+    yazi(d, (60, 250), "ELEKTRİĞİN", c.font("siyah", 64), c.YAZI)
+    yazi(d, (60, 320), f"%{tam(pay)}{ek(round(pay))}".upper(), c.font("siyah", 160), c.VURGU)
     yazi(d, (60, 510), "TEK CİHAZDAN!", c.font("siyah", 88), c.VURGU)
     x0, taban = 820, 640
     oran = [tl(x) / tl(cihazlar[-1]) for x in cihazlar]

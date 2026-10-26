@@ -7,7 +7,11 @@
     "kwh": 24.841,
     "gun": 30,
     "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
-    "etiketler": ["televizyon elektrik tüketimi", "tv ne kadar elektrik yakar", "philips tv"]
+    "etiketler": [
+      "televizyon elektrik tüketimi",
+      "tv ne kadar elektrik yakar",
+      "philips tv"
+    ]
   },
   {
     "id": "buzdolabi",
@@ -17,7 +21,10 @@
     "kwh": 43.189,
     "gun": 30,
     "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
-    "etiketler": ["buzdolabı elektrik tüketimi", "buzdolabı ne kadar elektrik yakar"]
+    "etiketler": [
+      "buzdolabı elektrik tüketimi",
+      "buzdolabı ne kadar elektrik yakar"
+    ]
   },
   {
     "id": "sigma-comfort-klima",
@@ -27,7 +34,11 @@
     "kwh": 208.14,
     "gun": 31,
     "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
-    "etiketler": ["klima elektrik tüketimi", "klima ne kadar elektrik yakar", "klima aylık ne kadar yakar"]
+    "etiketler": [
+      "klima elektrik tüketimi",
+      "klima ne kadar elektrik yakar",
+      "klima aylık ne kadar yakar"
+    ]
   },
   {
     "id": "grundig-gpdh-9634-kurutma",
@@ -38,7 +49,11 @@
     "kullanim_adi": "program",
     "haftalik_kullanim": 3,
     "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
-    "etiketler": ["kurutma makinesi elektrik tüketimi", "kurutma makinesi ne kadar elektrik yakar", "grundig kurutma makinesi"]
+    "etiketler": [
+      "kurutma makinesi elektrik tüketimi",
+      "kurutma makinesi ne kadar elektrik yakar",
+      "grundig kurutma makinesi"
+    ]
   },
   {
     "id": "arnica-kayzer-1011-kettle",
@@ -51,6 +66,42 @@
     "anlik_watt": 2069,
     "not": "1 litreden biraz fazla su",
     "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
-    "etiketler": ["kettle elektrik tüketimi", "su ısıtıcı ne kadar elektrik yakar", "arnica kayzer"]
+    "etiketler": [
+      "kettle elektrik tüketimi",
+      "su ısıtıcı ne kadar elektrik yakar",
+      "arnica kayzer"
+    ]
+  },
+  {
+    "id": "grundig-camasir-makinesi",
+    "cihaz": "Grundig 10 kg Çamaşır Makinesi",
+    "kisa_ad": "Çamaşır makinesi",
+    "tip": "kullanim",
+    "kwh": 0.38,
+    "kullanim_adi": "yıkama",
+    "anlik_watt": 1800,
+    "not": "40 °C program · ısıtırken 1800 W",
+    "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
+    "etiketler": [
+      "çamaşır makinesi elektrik tüketimi",
+      "çamaşır makinesi ne kadar elektrik yakar",
+      "grundig çamaşır makinesi"
+    ]
+  },
+  {
+    "id": "arcelik-bulasik-makinesi",
+    "cihaz": "Arçelik Bulaşık Makinesi",
+    "kisa_ad": "Bulaşık makinesi",
+    "tip": "kullanim",
+    "kwh": 0.81,
+    "kullanim_adi": "yıkama",
+    "sure_sn": 7560,
+    "not": "Eski model · ekonomik program",
+    "link": "https://testigotr.com.tr/ev-aletleri-elektrik-tuketimi/",
+    "etiketler": [
+      "bulaşık makinesi elektrik tüketimi",
+      "bulaşık makinesi ne kadar elektrik yakar",
+      "arçelik bulaşık makinesi"
+    ]
   }
 ]
