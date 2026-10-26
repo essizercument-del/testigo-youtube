@@ -1,0 +1,10 @@
+{
+  "_aciklama": "uzun_video.py ayarları. Cihazlar data/olcumler.json'dan gelir, en azdan en çoğa otomatik sıralanır.",
+  "olcum_cihazi": "prize takılan enerji ölçer",
+  "haric": [],
+  "haftalik_kullanim": {
+    "arnica-kayzer-1011-kettle": 14
+  },
+  "baslik": "{n} Ev Aletini Prizden Ölçtüm: Faturayı En Çok Hangisi Şişiriyor?",
+  "fps": 30
+}
