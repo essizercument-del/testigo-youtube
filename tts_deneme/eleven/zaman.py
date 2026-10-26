@@ -1,5 +1,5 @@
 import json, subprocess, sys, numpy as np
-B = "bolum5m"
+B = "bolum6"
 from faster_whisper import WhisperModel
 m = WhisperModel("small", device="cpu", compute_type="int8")
 import wave
